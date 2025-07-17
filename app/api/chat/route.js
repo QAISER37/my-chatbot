@@ -6,14 +6,22 @@ const openai = new OpenAI({
 });
 
 export async function POST(req) {
-  const { message } = await req.json();
+  try {
+    const { message } = await req.json();
 
-  const chatResponse = await openai.chat.completions.create({
-    messages: [{ role: 'user', content: message }],
-    model: 'gpt-3.5-turbo',
-  });
+    if (!message) {
+      return NextResponse.json({ error: 'No message provided' }, { status: 400 });
+    }
 
-  const reply = chatResponse.choices[0].message.content;
+    const chatResponse = await openai.chat.completions.create({
+      messages: [{ role: 'user', content: message }],
+      model: 'gpt-3.5-turbo',
+    });
 
-  return NextResponse.json({ reply });
+    const reply = chatResponse.choices[0]?.message?.content || 'No response';
+    return NextResponse.json({ reply });
+  } catch (error) {
+    console.error('Chat API error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
 }
