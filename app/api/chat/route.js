@@ -21,7 +21,7 @@ export async function POST(req) {
     const reply = chatResponse.choices[0]?.message?.content || 'No response';
     return NextResponse.json({ reply });
   } catch (error) {
-    console.error('Chat API error:', error);
+    console.error('API error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
